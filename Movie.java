@@ -1,3 +1,4 @@
+
 public class Movie {
     int Rank;
     String Title;
@@ -11,6 +12,26 @@ public class Movie {
     int Votes;
     float Revenue;
     int Metascore;
+
+    public Movie(int Rank, String Title, String Genre, String Description,
+                 String Director, String Actors, int Year, int Runtime,
+                 float Rating, int Votes, float Revenue, int Metascore){
+
+        this.Rank = Rank;
+        this.Title = Title;
+        this.Genre = Genre;
+        this.Description = Description;
+        this.Director = Director;
+        this.Actors = Actors;
+        this.Year = Year;
+        this.Runtime = Runtime;
+        this.Rating = Rating;
+        this.Votes = Votes;
+        this.Revenue = Revenue;
+        this.Metascore = Metascore;
+    }
+
+
     public int getRank() {
         return Rank;
     }
@@ -84,3 +105,4 @@ public class Movie {
         Metascore = metascore;
     }
 }
+
