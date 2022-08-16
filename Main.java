@@ -13,7 +13,7 @@ public class Main {
         List<Movie> arquivo = new ArrayList<Movie>();
 
         List<String[]> fields = linhas.stream().skip(1).map(buffer -> {
-            String[] atributos = buffer.split(",");
+            String[] atributos = buffer.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
             return atributos;
         }).collect(Collectors.toList());;
 
