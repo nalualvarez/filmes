@@ -1,15 +1,26 @@
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
 
+    static List<Movie> melhoresTerror(List<Movie> arquivo){
 
+        arquivo.stream()
+                .filter(k-> k.Genre.contains("Horror"))
+                .sorted(Comparator.comparingDouble(Movie::getRating).reversed()).limit(20)
+                .forEach(System.out::println);
+
+        return null;
+    }
     static List<String> converteGeneros(String string){
         string = string.replace("\"", "");
         string = string.trim();
@@ -36,7 +47,6 @@ public class Main {
         }
     }
 
-
     static  List<Movie> parseLinha(List<String> linhas){
 
         List<Movie> arquivo = new ArrayList<Movie>();
@@ -46,7 +56,6 @@ public class Main {
             return atributos;
         }).collect(Collectors.toList());;
 
-
         for (String[] strings : fields) {
 
             arquivo.add (new Movie(converteInteiro(strings[0]), strings[1], converteGeneros(strings[2]), strings[3], strings[4],
@@ -54,7 +63,7 @@ public class Main {
                         converteInteiro(strings[9]), converteFloat(strings[10]),converteInteiro(strings[11])));
         }
 
-        System.out.println(arquivo.get(0));
+//        System.out.println(arquivo.get(0));
 
         return arquivo;
     }
@@ -62,7 +71,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //roda o main pra ver o parse funcionando
+        System.out.println("Inicio processamento: " + Instant.now());
+
 
         Path movies1 = Paths.get("filmes/movies1.csv");
         Path movies2 = Paths.get("filmes/movies2.csv");
@@ -81,8 +91,19 @@ public class Main {
             System.err.println("Erro na leitura dos arquivos");
         }
 
-        parseLinha(arquivo1);
+        List<Movie> filmes;
+
+        filmes = parseLinha(arquivo1);
+        filmes.addAll(parseLinha(arquivo2));
+        filmes.addAll(parseLinha(arquivo3));
+
+//        System.out.println(filmes.get(800));
+
+        melhoresTerror(filmes);
+
+        System.out.println("Fim processamento: " + Instant.now());
     }
+
 
 
 }
