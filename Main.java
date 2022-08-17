@@ -69,7 +69,7 @@ public class Main {
     private static void salvarArquivoMelhores(List<Movie> melhoresFilmes) {
         criarPasta("melhoresFilmes/");
         try {
-            Path arquivoAno = Paths.get("melhoresFilmes/melhoresFilmes.txt");
+            Path arquivoAno = Paths.get("melhoresFilmes/terror.txt");
             List<String> texto = melhoresFilmes.stream()
                     .map(m -> m.toString())
                     .collect(Collectors.toList());
