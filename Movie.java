@@ -1,8 +1,9 @@
+import java.util.List;
 
 public class Movie {
     int Rank;
     String Title;
-    String Genre;
+    List<String> Genre;
     String Description;
     String Director;
     String Actors;
@@ -13,7 +14,25 @@ public class Movie {
     float Revenue;
     int Metascore;
 
-    public Movie(int Rank, String Title, String Genre, String Description,
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "Rank=" + Rank +
+                ", Title='" + Title + '\'' +
+                ", Genre='" + Genre + '\'' +
+                ", Description='" + Description + '\'' +
+                ", Director='" + Director + '\'' +
+                ", Actors='" + Actors + '\'' +
+                ", Year=" + Year +
+                ", Runtime=" + Runtime +
+                ", Rating=" + Rating +
+                ", Votes=" + Votes +
+                ", Revenue=" + Revenue +
+                ", Metascore=" + Metascore +
+                '}';
+    }
+
+    public Movie(int Rank, String Title, List<String> Genre, String Description,
                  String Director, String Actors, int Year, int Runtime,
                  float Rating, int Votes, float Revenue, int Metascore){
 
@@ -44,10 +63,10 @@ public class Movie {
     public void setTitle(String title) {
         Title = title;
     }
-    public String getGenre() {
+    public List<String> getGenre() {
         return Genre;
     }
-    public void setGenre(String genre) {
+    public void setGenre(List<String> genre) {
         Genre = genre;
     }
     public String getDescription() {
