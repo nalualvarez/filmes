@@ -1,93 +1,22 @@
+import static java.util.stream.Collectors.groupingBy;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.groupingBy;
 
 public class Main {
-
-
-    static void melhoresAnos(List<Movie> filmes){
-
-        Map<Integer, List<Movie>> filmesPorAno = filmes.stream().collect(groupingBy(Movie::getYear));
-
-        for (List<Movie> iterador: filmesPorAno.values()) {
-            System.out.println(iterador.get(0));
-            //TODO SEPARAR OS 50 MELHORES PARA CADA ANO
-        }
-
-
-
-
-
-    }
-
-    static List<Movie> melhoresTerror(List<Movie> arquivo){
-
-        arquivo.stream()
-                .filter(k-> k.Genre.contains("Horror"))
-                .sorted(Comparator.comparingDouble(Movie::getRating).reversed()).limit(20)
-                .forEach(System.out::println);
-
-        return null;
-    }
-    static List<String> converteGeneros(String string){
-        string = string.replace("\"", "");
-        string = string.trim();
-        String[] generos = string.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-        return Arrays.asList(generos);
-    }
-    static Integer converteInteiro(String string){
-        string = string.trim();
-        if (string.isBlank()){
-            return 0;
-        }
-        else {
-            return Integer.valueOf(string);
-        }
-    }
-
-    static Float converteFloat(String string){
-        string = string.trim();
-        if (string.isBlank()){
-            return (float)0;
-        }
-        else {
-            return Float.parseFloat(string);
-        }
-    }
-
-    static  List<Movie> parseLinha(List<String> linhas){
-
-        List<Movie> arquivo = new ArrayList<Movie>();
-
-        List<String[]> fields = linhas.stream().skip(1).map(buffer -> {
-            String[] atributos = buffer.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-            return atributos;
-        }).collect(Collectors.toList());;
-
-        for (String[] strings : fields) {
-
-            arquivo.add (new Movie(converteInteiro(strings[0]), strings[1], converteGeneros(strings[2]), strings[3], strings[4],
-                        strings[5], converteInteiro(strings[6]), converteInteiro(strings[7]),converteFloat(strings[8]),
-                        converteInteiro(strings[9]), converteFloat(strings[10]),converteInteiro(strings[11])));
-        }
-
-//        System.out.println(arquivo.get(0));
-
-        return arquivo;
-    }
-
-
     public static void main(String[] args) {
 
         System.out.println("Inicio processamento: " + Instant.now());
-
 
         Path movies1 = Paths.get("filmes/movies1.csv");
         Path movies2 = Paths.get("filmes/movies2.csv");
@@ -101,7 +30,6 @@ public class Main {
             arquivo2 = Files.readAllLines(movies2);
             arquivo3 = Files.readAllLines(movies3);
 
-
         } catch (Exception e) {
             System.err.println("Erro na leitura dos arquivos");
         }
@@ -112,14 +40,122 @@ public class Main {
         filmes.addAll(parseLinha(arquivo2));
         filmes.addAll(parseLinha(arquivo3));
 
-//        System.out.println(filmes.get(800));
+        // System.out.println(filmes.get(800));
 
-//        melhoresTerror(filmes);
-        melhoresAnos(filmes);
+        List<Movie> melhoresFilmes = melhoresTerror(filmes);
+        salvarArquivoMelhores(melhoresFilmes);
+
+        Map<Integer, List<Movie>> filmesPorAno = melhoresAnos(filmes);
+        salvarArquivosPorAno(filmesPorAno);
 
         System.out.println("Fim processamento: " + Instant.now());
     }
 
+    private static void salvarArquivosPorAno(Map<Integer, List<Movie>> filmesPorAno) {
+        criarPasta("filmesPorAno/");
+        for (Integer ano : filmesPorAno.keySet()) {
+            try {
+                Path arquivoAno = Paths.get("filmesPorAno/" + ano + ".txt");
+                List<String> texto = filmesPorAno.get(ano).stream()
+                        .map(m -> m.toString())
+                        .collect(Collectors.toList());
+                Files.write(arquivoAno, texto, StandardCharsets.UTF_8);
+            } catch (IOException ex) {
+                System.out.println("Não foi possível escrever arquivo de saída.");
+            }
+        }
+    }
 
+    private static void salvarArquivoMelhores(List<Movie> melhoresFilmes) {
+        criarPasta("melhoresFilmes/");
+        try {
+            Path arquivoAno = Paths.get("melhoresFilmes/melhoresFilmes.txt");
+            List<String> texto = melhoresFilmes.stream()
+                    .map(m -> m.toString())
+                    .collect(Collectors.toList());
+            Files.write(arquivoAno, texto, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            System.out.println("Não foi possível escrever arquivo de saída.");
+        }
+    }
 
+    private static void criarPasta(String caminho) {
+        try {
+            Path pasta = Paths.get(caminho);
+            Files.createDirectories(pasta);
+        } catch (IOException ex) {
+            throw new IllegalStateException();
+        }
+    }
+
+    private static Map<Integer, List<Movie>> melhoresAnos(List<Movie> filmes) {
+
+        Map<Integer, List<Movie>> filmesPorAno = filmes.stream().collect(groupingBy(Movie::getYear));
+
+        for (int ano : filmesPorAno.keySet()) {
+            List<Movie> lista = filmesPorAno.get(ano);
+            lista = lista.stream()
+                    .sorted(Comparator.comparingDouble(Movie::getRating).reversed())
+                    .limit(50)
+                    .collect(Collectors.toList());
+            filmesPorAno.put(ano, lista);
+        }
+
+        return filmesPorAno;
+    }
+
+    private static List<Movie> melhoresTerror(List<Movie> arquivo) {
+        return arquivo.stream()
+                .filter(k -> k.Genre.contains("Horror"))
+                .sorted(Comparator.comparingDouble(Movie::getRating).reversed()).limit(20)
+                .collect(Collectors.toList());
+    }
+
+    private static List<String> converteGeneros(String string) {
+        string = string.replace("\"", "");
+        string = string.trim();
+        String[] generos = string.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+        return Arrays.asList(generos);
+    }
+
+    private static Integer converteInteiro(String string) {
+        string = string.trim();
+        if (string.isBlank()) {
+            return 0;
+        } else {
+            return Integer.valueOf(string);
+        }
+    }
+
+    private static Float converteFloat(String string) {
+        string = string.trim();
+        if (string.isBlank()) {
+            return (float) 0;
+        } else {
+            return Float.parseFloat(string);
+        }
+    }
+
+    private static List<Movie> parseLinha(List<String> linhas) {
+
+        List<Movie> arquivo = new ArrayList<Movie>();
+
+        List<String[]> fields = linhas.stream().skip(1).map(buffer -> {
+            String[] atributos = buffer.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+            return atributos;
+        }).collect(Collectors.toList());
+        ;
+
+        for (String[] strings : fields) {
+
+            arquivo.add(new Movie(converteInteiro(strings[0]), strings[1], converteGeneros(strings[2]), strings[3],
+                    strings[4],
+                    strings[5], converteInteiro(strings[6]), converteInteiro(strings[7]), converteFloat(strings[8]),
+                    converteInteiro(strings[9]), converteFloat(strings[10]), converteInteiro(strings[11])));
+        }
+
+        // System.out.println(arquivo.get(0));
+
+        return arquivo;
+    }
 }
