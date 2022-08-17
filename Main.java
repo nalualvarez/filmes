@@ -3,14 +3,29 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.groupingBy;
+
 public class Main {
+
+
+    static void melhoresAnos(List<Movie> filmes){
+
+        Map<Integer, List<Movie>> filmesPorAno = filmes.stream().collect(groupingBy(Movie::getYear));
+
+        for (List<Movie> iterador: filmesPorAno.values()) {
+            System.out.println(iterador.get(0));
+            //TODO SEPARAR OS 50 MELHORES PARA CADA ANO
+        }
+
+
+
+
+
+    }
 
     static List<Movie> melhoresTerror(List<Movie> arquivo){
 
@@ -99,7 +114,8 @@ public class Main {
 
 //        System.out.println(filmes.get(800));
 
-        melhoresTerror(filmes);
+//        melhoresTerror(filmes);
+        melhoresAnos(filmes);
 
         System.out.println("Fim processamento: " + Instant.now());
     }

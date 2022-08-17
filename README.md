@@ -4,9 +4,9 @@ Enunciado
 
 A partir de 3 arquivos csv sobre filmes, realizar as seguintes atividades:
 
-    Ler os arquivos e carregar os dados em memoria (Utilizar java NIO 2, Collections e Threads)
+    Ler os arquivos e carregar os dados em memoria (Utilizar java NIO 2, Collections e Threads) OK
     Realizar filtros e gerar outras saidas (utilizar lambda, stream, programaçao funcional):
-    Criar um arquivo com os MELHORES 20 filmes (rating) de terror (genre = 'Horror' - Usar regex).
+    Criar um arquivo com os MELHORES 20 filmes (rating) de terror (genre = 'Horror' - Usar regex). OK
     Criar um arquivo para cada ano, no conteudo dos arquivos incluir os 50 melhores filmes daquele ano ordenados por rating.
     No final do processamento gerar um arquivo com o tempo do processamento (utilizar java.time):
     Incio processamento: dd/MM/yyyy HH:mm:ss.mi
