@@ -1,22 +1,24 @@
 import static java.util.stream.Collectors.groupingBy;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
 
-        System.out.println("Inicio processamento: " + Instant.now());
+        Instant inicio = Instant.now();
+
+        LocalDateTime inicioLDT = LocalDateTime.ofInstant(inicio, ZoneId.systemDefault());
+
+        System.out.println("Inicio processamento: " + inicioLDT.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
+
+
 
         Path movies1 = Paths.get("filmes/movies1.csv");
         Path movies2 = Paths.get("filmes/movies2.csv");
@@ -48,7 +50,17 @@ public class Main {
         Map<Integer, List<Movie>> filmesPorAno = melhoresAnos(filmes);
         salvarArquivosPorAno(filmesPorAno);
 
-        System.out.println("Fim processamento: " + Instant.now());
+        Instant fim = Instant.now();
+
+        LocalDateTime fimLDT = LocalDateTime.ofInstant(inicio, ZoneId.systemDefault());
+
+        System.out.println("Fim processamento: " + fimLDT.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
+
+        Duration duracao= Duration.between(inicio, fim);
+
+        System.out.println("Tempo em milissegundos: " + duracao.toMillis() + " milissegundos");
+
+        System.out.println("Tempo em segundos: " + duracao.toSeconds() + " segundos");
     }
 
     private static void salvarArquivosPorAno(Map<Integer, List<Movie>> filmesPorAno) {
