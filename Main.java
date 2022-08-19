@@ -14,11 +14,11 @@ public class Main {
 
         Instant inicio = Instant.now();
 
-        LocalDateTime inicioLDT = LocalDateTime.ofInstant(inicio, ZoneId.systemDefault());
+        // LocalDateTime inicioLDT = LocalDateTime.ofInstant(inicio, ZoneId.systemDefault());
 
-        System.out.println("Inicio processamento: " + inicioLDT.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
-
-
+        // System.out.println(
+        // "Inicio processamento: " +
+        // inicioLDT.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
 
         Path movies1 = Paths.get("filmes/movies1.csv");
         Path movies2 = Paths.get("filmes/movies2.csv");
@@ -54,13 +54,22 @@ public class Main {
 
         LocalDateTime fimLDT = LocalDateTime.ofInstant(inicio, ZoneId.systemDefault());
 
-        System.out.println("Fim processamento: " + fimLDT.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
+        // System.out
+        // .println("Fim processamento: " +
+        // fimLDT.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
 
-        Duration duracao= Duration.between(inicio, fim);
+        // Duration duracao = Duration.between(inicio, fim);
 
-        System.out.println("Tempo em milissegundos: " + duracao.toMillis() + " milissegundos");
+        // System.out.println("Tempo em milissegundos: " + duracao.toMillis() + "
+        // milissegundos");
 
-        System.out.println("Tempo em segundos: " + duracao.toSeconds() + " segundos");
+        // System.out.println("Tempo em segundos: " + duracao.toSeconds() + "
+        // segundos");
+
+        salvarTempoProcessamento(inicio, fim, fimLDT);
+
+        System.out.println("Arquivos gerados com sucesso!");
+
     }
 
     private static void salvarArquivosPorAno(Map<Integer, List<Movie>> filmesPorAno) {
@@ -169,5 +178,23 @@ public class Main {
         // System.out.println(arquivo.get(0));
 
         return arquivo;
+    }
+
+    private static void salvarTempoProcessamento(Instant inicio, Instant fim, LocalDateTime fimLDT) {
+        criarPasta("tempoProcessamento/");
+
+        try {
+            Path arquivoProcessamento = Paths.get("tempoProcessamento/tempo.txt");
+            Duration duracao = Duration.between(inicio, fim);
+            List<String> texto = List.of(
+                    "Fim processamento: " +
+                            fimLDT.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")),
+                    "Tempo em milissegundos: " + duracao.toMillis() + " milissegundos",
+                    "Tempo em segundos: " + duracao.toSeconds() + " segundos");
+            Files.write(arquivoProcessamento, texto, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            System.out.println("Não foi possível escrever arquivo de saída.");
+        }
+
     }
 }
