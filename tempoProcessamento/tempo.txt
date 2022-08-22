@@ -1,3 +1,0 @@
-Fim processamento: 19/08/2022 13:50:38.133
-Tempo em milissegundos: 440 milissegundos
-Tempo em segundos: 0 segundos
